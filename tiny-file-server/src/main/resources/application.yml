@@ -1,0 +1,82 @@
+# server
+server:
+  port: ${SERVER_PORT:8080}
+  compression:
+    enabled: true
+
+### eureka
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL:http://eureka_admin:eureka_admin1!3@127.0.0.1:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+    hostname: ${spring.cloud.client.ip-address}
+
+# spring
+spring:
+  application:
+    name: tiny-file-server
+
+  #main
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+
+  # -------------- database config start --------------
+  ## sqlite
+  datasource:
+    driver-class-name: org.sqlite.JDBC
+    url: jdbc:sqlite:${zfile.db.path}
+  # -------------- database config end --------------
+
+  # ingroe zfile-pro upgrade sql
+  flyway:
+    ignore-migration-patterns: V5__.*,V6__.*,V10__.*
+    clean-disabled: true
+    enabled: false
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm
+    time-zone: GMT+8
+
+  servlet:
+    multipart:
+      max-request-size: ${SERVLET_MULTIPART_MAX_REQUEST_SIZE:-1}
+      max-file-size: ${SERVLET_MULTIPART_MAX_FILE_SIZE:-1}
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*.xml,classpath*:com/gitee/sunchenbin/mybatis/actable/mapping/*/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
+# storage key
+tiny:
+  file:
+    storageKey: ${TINY_FILE_STORAGEKEY:default}
+    username: ${TINY_FILE_USERNAME:admin}
+    password: ${TINY_FILE_PASSWORD:admin1#3}
+
+# tiny-file配置（基于z-file）
+zfile:
+  debug: false
+  log:
+    path: /home/.zfile-v4/logs
+    encoder: UTF-8
+  db:
+    path: /home/.zfile-v4/db/zfile
+  preview:
+    text:
+      maxFileSizeKb: 512
+
+# knife4j
+knife4j:
+  enable: ${KNIFE4J_ENABLE:true}
+  setting:
+    enableSwaggerModels: ${KNIFE4J_SETTING_ENABLESWAGGERMODELS:true}

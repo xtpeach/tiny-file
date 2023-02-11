@@ -1,0 +1,119 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {project.name}
+  labels:
+    app.kubernetes.io/name: {project.name}
+    app.kubernetes.io/instance: {project.name}
+    app.kubernetes.io/version: {project.version}
+    app.kubernetes.io/component: micro-app
+    app.kubernetes.io/part-of: xtpeach
+spec:
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: {project.name}
+    app.kubernetes.io/instance: {project.name}
+  ports:
+    - port: {project.port}
+      nodePort: {project.k8s.node.port}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {project.name}
+  labels:
+    app.kubernetes.io/name: {project.name}
+    app.kubernetes.io/instance: {project.name}
+    app.kubernetes.io/version: {project.version}
+    app.kubernetes.io/component: micro-app
+    app.kubernetes.io/part-of: xtpeach
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {project.name}
+      app.kubernetes.io/instance: {project.name}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {project.name}
+        app.kubernetes.io/instance: {project.name}
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: {project.name}
+          image: {project.name}:{project.version}
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+          ports:
+            - containerPort: {project.port}
+              name: service
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+            - name: DATASOURCE_DBUSER
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: secret-pg
+            - name: DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: cipher_password
+                  name: secret-pg
+            - name: JDBC_URL
+              value: jdbc:postgresql://timescaledb-service:15432
+            - name: DATASOURCE_URL
+              value: $(JDBC_URL)/portal
+            - name: JAR_OPTS
+              value: "--logging.path=/home/logs/"
+            - name: JAVA_OPTS
+              value: "-Duser.timezone=Asia/Shanghai
+                      -Dclient.encoding.override=UTF-8
+                      -Dfile.encoding=UTF-8
+                      -Djava.security.egd=file:/dev/./urandom
+                      -XX:+UnlockExperimentalVMOptions
+                      -XX:+UseCGroupMemoryLimitForHeap
+                      -XX:MaxRAMFraction=1
+                      -XX:SurvivorRatio=8
+                      -XX:MaxTenuringThreshold=5
+                      -XX:PretenureSizeThreshold=1M
+                      -XX:+ExplicitGCInvokesConcurrent
+                      -XX:+ScavengeBeforeFullGC
+                      -XX:+UseParNewGC
+                      -XX:+UseConcMarkSweepGC
+                      -XX:+UseCMSCompactAtFullCollection
+                      -XX:CMSFullGCsBeforeCompaction=9
+                      -XX:+CMSScavengeBeforeRemark
+                      -XX:+CMSParallelInitialMarkEnabled
+                      -XX:+CMSParallelRemarkEnabled
+                      -XX:+HeapDumpOnOutOfMemoryError
+                      -XX:HeapDumpPath=/var/log/HeapDumpOnOutOfMemoryError/
+                      -XX:+PrintGCDetails
+                      -XX:+PrintGCDateStamps
+                      -XX:+PrintGCTimeStamps
+                      -XX:+PrintHeapAtGC
+                      -XX:+PrintTenuringDistribution
+                      -XX:+PrintGCApplicationConcurrentTime
+                      -XX:+PrintGCApplicationStoppedTime
+                      -XX:+UseGCLogFileRotation
+                      -Xloggc:/var/log/gc.log
+                      -XX:NumberOfGCLogFiles=5
+                      -XX:GCLogFileSize=5M"
+            - name: JAR_OPTS
+              value: "--spring.redis.port=6379"
+          resources:
+            limits:
+              memory: "2048Mi"
+            requests:
+              memory: "2048Mi"
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /etc/localtime
