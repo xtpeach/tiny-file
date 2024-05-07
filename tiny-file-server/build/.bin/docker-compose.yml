@@ -53,9 +53,29 @@ services:
       #-XX:NumberOfGCLogFiles=5
       #-XX:GCLogFileSize=5M
       #-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5050
-      JAVA_OPTS: -Xms1024m -Xmx1024m -Xmn400m -Xss1M -XX:MetaspaceSize=256M -XX:MaxMetaspaceSize=256M -Duser.timezone=Asia/Shanghai -Dclient.encoding.override=UTF-8 -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=5 -XX:PretenureSizeThreshold=1M -XX:+ExplicitGCInvokesConcurrent -XX:+ScavengeBeforeFullGC -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:CMSFullGCsBeforeCompaction=9 -XX:+CMSScavengeBeforeRemark -XX:+CMSParallelInitialMarkEnabled -XX:+CMSParallelRemarkEnabled -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/log/HeapDumpOnOutOfMemoryError/ -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+UseGCLogFileRotation -Xloggc:/var/log/gc.log -XX:NumberOfGCLogFiles=5 -XX:GCLogFileSize=5M
-      JAR_OPTS: --logging.path=/home/logs/
-      EUREKA_CLIENT_SERVICEURL: http://admin:admin1!3@ithmp.eureka.xtpeach.com.cn:18080/eureka/
+      JAVA_OPTS: "-Xms1024m -Xmx1024m -Xmn400m -Xss1M -XX:MetaspaceSize=256M -XX:MaxMetaspaceSize=256M -Duser.timezone=Asia/Shanghai -Dclient.encoding.override=UTF-8 -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=5 -XX:PretenureSizeThreshold=1M -XX:+ExplicitGCInvokesConcurrent -XX:+ScavengeBeforeFullGC -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:CMSFullGCsBeforeCompaction=9 -XX:+CMSScavengeBeforeRemark -XX:+CMSParallelInitialMarkEnabled -XX:+CMSParallelRemarkEnabled -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/log/HeapDumpOnOutOfMemoryError/ -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+UseGCLogFileRotation -Xloggc:/var/log/gc.log -XX:NumberOfGCLogFiles=5 -XX:GCLogFileSize=5M"
+      JAR_OPTS: "--logging.path=/home/logs/"
+
+      EUREKA_CLIENT_SERVICEURL: "http://eureka_admin:eureka_admin1!3@127.0.0.1:8761/eureka/"
+      NACOS_SERVER_ADDR: "http://127.0.0.1:8848"
+      NACOS_DISCOVERY_CLUSTER_NAME: "DEFAULT"
+      NACOS_DISCOVERY_USERNAME: "nacos"
+      NACOS_DISCOVERY_PASSWORD: "nacos"
+      NACOS_DISCOVERY_NAMESPACE: "public"
+      NACOS_DISCOVERY_GROUP: "DEFAULT_GROUP"
+      NACOS_DISCOVERY_EPHEMERAL: "true"
+      NACOS_DISCOVERY_WEIGHT: "1"
+
+      SERVLET_MULTIPART_MAX_REQUEST_SIZE: "-1"
+      SERVLET_MULTIPART_MAX_FILE_SIZE: "-1"
+
+      TINY_FILE_STORAGEKEY: "default"
+      TINY_FILE_USERNAME: "admin"
+      TINY_FILE_PASSWORD: "admin1#3"
+
+      KNIFE4J_ENABLE: "true"
+      KNIFE4J_SETTING_ENABLESWAGGERMODELS: "true"
+
     network_mode: "host"
     volumes:
       - /etc/localtime:/etc/localtime
